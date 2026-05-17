@@ -10,7 +10,7 @@ The application includes a graphical interface built with raylib for configurati
 
 ## Preview
 
-![System preview](images/preview.jpg)
+![System preview](Images/preview.jpg)
 
 ---
 
