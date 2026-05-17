@@ -1,126 +1,109 @@
 # PSO Sensor Placement
 
-This project implements **Particle Swarm Optimization (PSO)** to solve a sensor placement problem on a 2D grid loaded from a bitmap image.
+This project implements Particle Swarm Optimization for solving a sensor placement problem on a 2D grid generated from a bitmap image.
 
-The goal is to place sensors of different types in predefined candidate locations while:
-- respecting a total budget,
-- respecting per-type sensor availability,
-- satisfying coverage requirements for each point,
-- minimizing uncovered points and total cost.
+The goal is to select optimal sensor locations and types while satisfying coverage constraints, budget limits, and sensor availability, and minimizing uncovered areas and total cost.
 
-The application includes a graphical UI built with **raylib** for configuration, visualization, and result export.
+The application includes a graphical interface built with raylib for configuration, visualization, and result export.
+
+---
+
+## Preview
+
+![System preview](images/preview.jpg)
 
 ---
 
 ## Features
 
-- Bitmap-based input (sensor candidates and coverage points)
-- Multiple sensor types with configurable:
-  - range
-  - cost
-  - availability
-- PSO-based optimization with tunable parameters
-- Real-time progress visualization
-- Result preview with coverage visualization
-- Export:
-  - solution image (PNG)
-  - solution data (JSON)
+- Bitmap based input for sensor candidates and coverage zones
+- Multiple sensor types with configurable range cost and availability
+- Particle Swarm Optimization with adjustable parameters
+- Real time visualization of optimization progress
+- Visual preview of final sensor coverage
+- Export of results as image and structured data
 
 ---
 
-## Input Image Format
+## Input Format
 
-The input is a BMP image with color-coded pixels:
+The input is a BMP image where pixel colors define the problem structure
 
-| Color (RGB)        | Meaning                          |
-|--------------------|----------------------------------|
-| (0, 0, 255)        | Sensor candidate position        |
-| (0, 255, 0)        | Coverage point (coverage = 1)    |
-| (0, 150, 0)        | Coverage point (coverage = 2)    |
-| (0, 100, 0)        | Coverage point (coverage = 3)    |
+- 0 0 255 — Available sensor placement  
+- 0 255 0 — Coverage point level 1  
+- 0 150 0 — Coverage point level 2  
+- 0 100 0 — Coverage point level 3  
 
-Maximum supported image size: **1024 × 1024**  
-Larger images are automatically downscaled.
+Maximum image size is 1024 by 1024. Larger images are scaled down automatically.
 
 ---
 
 ## Algorithm Overview
 
-- Each particle represents an assignment of sensor types to candidate positions.
-- Continuous PSO positions are rounded to discrete sensor types:
-  - `0` = no sensor
-  - `1..N` = sensor type
-- The objective function consists of:
-  - total sensor cost
-  - coverage penalty (uncovered points)
-  - quantity penalty (exceeding availability)
-  - budget penalty (exceeding total budget)
+Each particle represents a full assignment of sensor types to candidate locations.
 
-Lower objective value means a better solution.
+Particle positions are mapped to discrete decisions where
+
+- 0 means no sensor
+- 1 to N represent sensor types
+
+The optimization objective combines
+
+- total deployment cost
+- coverage penalties for uncovered points
+- penalties for exceeding sensor availability
+- penalties for exceeding budget
+
+Lower values indicate better solutions.
 
 ---
 
-## Configuration Parameters
+## Configuration
 
-### PSO Parameters
-- `Particles number`
-- `Total iterations`
-- `c1`, `c2` – cognitive and social coefficients
-- `w` – inertia weight
+### PSO parameters
+
+- number of particles
+- number of iterations
+- inertia weight
+- cognitive coefficient
+- social coefficient
 
 ### Penalties
-- `Coverage penalty`
-- `Quantity penalty`
-- `Budget penalty`
 
-### Sensor Parameters
-For each sensor type:
-- Range
-- Price
-- Quantity
+- coverage penalty
+- availability penalty
+- budget penalty
+
+### Sensor configuration
+
+For each sensor type
+
+- range
+- cost
+- available quantity
 
 ---
 
 ## Output
 
-After the simulation finishes:
-- Coverage and sensor placement are displayed visually.
-- Summary statistics are shown:
-  - total cost
-  - objective function value
-  - uncovered points
-  - used sensors per type
-- Results can be exported as:
-  - **PNG image**
-  - **JSON file** containing full solution data
+After optimization completes the application provides
+
+- final sensor placement visualization
+- coverage map
+- summary statistics including cost and coverage quality
+- export options for image output and structured result data
 
 ---
 
 ## Dependencies
 
-- [raylib](https://www.raylib.com/)
-- [cJSON](https://github.com/DaveGamble/cJSON)
-
----
-
-## Build Notes
-
-This project is written in **C** and uses a simple procedural structure with shared global state between the UI and the PSO algorithm.
-
-Recommended:
-- GCC or Clang
-- C99 or newer
+- raylib
+- cJSON
 
 ---
 
 ## Notes
 
-- Sensor type `0` always means *no sensor placed*.
-- The application is single-threaded; PSO iterations are processed in small chunks per frame to keep the UI responsive.
-- Large images and many sensor points can significantly increase memory usage.
-
----
-
-## License
-
-MIT (or whatever you decide)
+- Sensor type 0 represents no sensor placement
+- The optimization runs incrementally to keep the UI responsive
+- Large input data significantly increase computation cost and memory usage
